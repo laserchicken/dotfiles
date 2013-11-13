@@ -1,0 +1,112 @@
+// emacs as external editor
+editor_shell_command = "emacsclient -c";
+
+// view source in your editor
+view_source_use_external_editor = true;
+
+//Random start page///////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////   
+/**
+ * Returns a random integer between min and max
+ * Using Math.round() will give you a non-uniform distribution!
+ */
+var getRandomInt = function (min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+var random_page_number = getRandomInt(1, 110);
+if(random_page_number<10) {
+    random_page_string = "00" + random_page_number.toString();
+} else if(random_page_number>10 && random_page_number<100) {
+    random_page_string = "0" + random_page_number.toString();
+} else {
+    random_page_string = random_page_number.toString();
+}
+
+// teach me something about bash whenever I start my browser
+homepage = "http://mywiki.wooledge.org/BashFAQ/" + random_page_string;
+
+//////////////////////////////////////////////////////////////////////////////////////   
+
+define_webjump("so", "http://stackoverflow.com/search?q=%s");
+define_webjump("ling", "http://ling.pl/%s");
+define_webjump("youtube", "http://www.youtube.com/results?search_query=%s&search=Search");
+define_webjump("postgresql", "http://www.postgresql.org/search/?u=%2Fdocs%2F8.4%2F&q=%s");
+define_webjump("trac-show-ticket", "https://subversion.ultimo.pl/trac/projects/ticket/%s");
+
+define_webjump("hermes", "http://hermes.ultimo.pl/");
+
+//Integracja conkerora z org-mode (capture), zrodlo http://emacs-fu.blogspot.com/2010/12/conkeror-web-browsing-emacs-way.html
+// org-protocol stuff
+function org_capture (url, title, selection, window) {
+    var cmd_str =
+        'emacsclient -c \"org-protocol:/capture:/w/'+url+'/'+title+'/'+selection+'\"';
+    if (window != null) {
+      window.minibuffer.message('Issuing ' + cmd_str);
+    }
+    shell_command_blind(cmd_str);
+}
+
+interactive("org-capture", "Clip url, title, and selection to capture via org-protocol",
+          function (I) {
+              org_capture(encodeURIComponent(I.buffer.display_uri_string),
+                        encodeURIComponent(I.buffer.document.title),
+                                encodeURIComponent(I.buffer.top_frame.getSelection()),
+                        I.window);
+          });
+// capture with C-c c
+define_key(content_buffer_normal_keymap, "C-c c", "org-capture");
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//otwiera link z kodem java w emacsie
+//najpierw nalezy wcisnac "c" (copy link) i po skopiowaniu tego linka uruchomic ta funkcje
+//skorzystano z funkcji read_from_x_primary_selection
+//http://babbagefiles.blogspot.com/2011/01/conkeror-browsing-web-emacs-style.html
+//emacsclient -n  dodaje plik do juz istniejacego okna emacsa
+//TODO : nalezy sprawdzic co sie stanie jesli okno nie bedzie istniec, w razie bledu obsluzyc go
+function emacs_open_source_url(window) {
+    var source_url = read_from_x_primary_selection();
+
+    var line_column_nr_url_regex = /#(.*):(.*)/;
+    var line_column_nr = line_column_nr_url_regex.exec(source_url);
+    var source_url_cleaned = source_url.replace("file://", "");
+    var source_url_cleaned = source_url_cleaned.replace(/#.*/, "");
+
+    if(line_column_nr) {
+//numer kolumny należy podać zawsze (może być 1) - wygląda na to ze tego wymaga składnia wywołania emacsa	
+	
+	var line_nr = line_column_nr[1];
+	var column_nr = line_column_nr[2];
+	var cmd_str =
+            'emacsclient -n ' + '+' + line_nr + ':' + column_nr + ' ' + source_url_cleaned;
+
+window.minibuffer.message('source: ' + cmd_str);		
+    } else {
+	var cmd_str =
+            'emacsclient -n ' + source_url_cleaned;
+
+window.minibuffer.message('source: ' + cmd_str);	
+    }
+	
+    if (window != null) {
+//	window.minibuffer.message('source: ' + source_url_cleaned);
+//	window.minibuffer.message('line_column_nr: ' + line_column_nr);	
+    }
+    shell_command_blind(cmd_str);
+}
+interactive("emacs-open-source-url",
+    "otwiera kod spod url w kliencie emacsa",
+    function (I) {
+        emacs_open_source_url(
+            I.window);	    
+    });
+
+// skrot "C-c C-o" otwiera wczesniej skopiowany url,
+//skrot analogiczny z otwieraniem linka w dokumencie org w emacsie
+define_key(content_buffer_normal_keymap, "C-c C-o", "emacs-open-source-url");
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+//uzywane do zrodel nie lokalnych 
+//otwiera link z kodem java w emacsie
+external_content_handlers.set("text/x-java", "emacsclient -n");
+
