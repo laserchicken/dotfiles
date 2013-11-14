@@ -1,0 +1,512 @@
+;;;emacs dziala jako demon (proces emacs --daemon jako program startowy),
+;;;aby przeladowac ten plik nalezy skilowac ten proces i odpalic jeszcze raz
+
+;;;;
+(add-to-list 'load-path "~/.emacs.d/")
+
+;;;;;transpozycja bufforów;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;If you have a window split showing two buffers, you can transpose the two buffers
+(defun transpose-buffers (arg)
+  "Transpose the buffers shown in two windows."
+  (interactive "p")
+  (let ((selector (if (>= arg 0) 'next-window 'previous-window)))
+    (while (/= arg 0)
+      (let ((this-win (window-buffer))
+            (next-win (window-buffer (funcall selector))))
+        (set-window-buffer (selected-window) next-win)
+        (set-window-buffer (funcall selector) this-win)
+        (select-window (funcall selector)))
+      (setq arg (if (plusp arg) (1- arg) (1+ arg))))))
+
+;; 
+(global-set-key "\C-x4t" 'transpose-buffers)
+
+;;;;emacs-goodies-el ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(add-to-list 'load-path "/usr/share/emacs/23.3/site-lisp/emacs-goodies-el")
+(require 'color-theme)
+(eval-after-load "color-theme"
+  '(progn
+     (color-theme-initialize)
+     (color-theme-hober)))
+
+;;ustawinia wektora ansi color uzywanego w trybie shell;;;;;;;;;;;;;;;;;;;;;
+;;;zamieniono blue na CadetBlue1 poniewaz ls dla katalogow bylo nieczytelne
+;;;na czarnym tle
+;;;aby wyświetlkić dozwolone kolory M-x list-colors-display
+
+(setq ansi-color-names-vector
+  ["black" "red" "green" "yellow" "CadetBlue1" "magenta" "cyan" "white"])
+
+;;;
+(setq x-select-enable-clipboard t)
+
+;;;;dired;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;When moving to parent directory by `^´,
+;;Dired by default creates a new buffer for each movement up.
+;;The following rebinds `^´ to use the same buffer.
+
+(add-hook 'dired-mode-hook
+ (lambda ()
+  (define-key dired-mode-map (kbd "^")
+    (lambda () (interactive) (find-alternate-file "..")))
+  ; was dired-up-directory
+ ))
+
+;;;;;;wylaczenie gui;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
+(if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+(if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+
+;;;;;;;;;sql-postgres;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;(setq sql-postgres-options (list "-p 5433"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; python-mode settings
+
+(require 'pycomplete)
+(setq auto-mode-alist (cons '("\\.py$" . python-mode) auto-mode-alist))
+(autoload 'python-mode "python-mode" "Python editing mode." t)
+
+(autoload 'pymacs-load "pymacs" nil t)
+(autoload 'pymacs-eval "pymacs" nil t)
+(autoload 'pymacs-apply "pymacs")
+(autoload 'pymacs-call "pymacs")
+
+(setq interpreter-mode-alist(cons '("python" . python-mode)
+                                  interpreter-mode-alist))
+(setq python-mode-hook
+      '(lambda () (progn
+                    (set-variable 'py-python-command "/usr/bin/python2.7")
+                    (set-variable 'py-indent-offset 4)
+                    (set-variable 'py-smart-indentation nil)
+                    (set-variable 'indent-tabs-mode nil))))
+
+;;CHEETAH;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-derived-mode cheetah-mode html-mode "Cheetah"
+  (make-face 'cheetah-variable-face)
+  (font-lock-add-keywords
+   nil
+   '(
+     ("\\(#\\(from\\|else\\|include\\|extends\\|set\\|def\\|import\\|for\\|if\\|end\\)+\\)\\>" 1 font-lock-type-face)
+     ("\\(#\\(from\\|for\\|end\\)\\).*\\<\\(for\\|import\\|def\\|if\\|in\\)\\>" 3 font-lock-type-face)
+     ("\\(##.*\\)\n" 1 font-lock-comment-face)
+     ("\\(\\$\\(?:\\sw\\|}\\|{\\|\\s_\\)+\\)" 1 font-lock-variable-name-face))
+   )
+  (font-lock-mode 1)
+  )
+(setq auto-mode-alist (cons '( "\\.tmpl\\'" . cheetah-mode ) auto-mode-alist ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
+;; I prefer using the "clipboard" selection (the one the
+;; typically is used by c-c/c-v) before the primary selection
+;; (that uses mouse-select/middle-button-click)
+(setq x-select-enable-clipboard t)
+
+;; If emacs is run in a terminal, the clipboard- functions have no
+;; effect. Instead, we use of xsel, see
+;; http://www.vergenet.net/~conrad/software/xsel/ -- "a command-line
+;; program for getting and setting the contents of the X selection"
+(unless window-system
+ (when (getenv "DISPLAY")
+  ;; Callback for when user cuts
+  (defun xsel-cut-function (text &optional push)
+    ;; Insert text to temp-buffer, and "send" content to xsel stdin
+    (with-temp-buffer
+      (insert text)
+      ;; I prefer using the "clipboard" selection (the one the
+      ;; typically is used by c-c/c-v) before the primary selection
+      ;; (that uses mouse-select/middle-button-click)
+      (call-process-region (point-min) (point-max) "xsel" nil 0 nil "--clipboard" "--input")))
+  ;; Call back for when user pastes
+  (defun xsel-paste-function()
+    ;; Find out what is current selection by xsel. If it is different
+    ;; from the top of the kill-ring (car kill-ring), then return
+    ;; it. Else, nil is returned, so whatever is in the top of the
+    ;; kill-ring will be used.
+    (let ((xsel-output (shell-command-to-string "xsel --clipboard --output")))
+      (unless (string= (car kill-ring) xsel-output)
+	xsel-output )))
+  ;; Attach callbacks to hooks
+  (setq interprogram-cut-function 'xsel-cut-function)
+  (setq interprogram-paste-function 'xsel-paste-function)
+  ;; Idea from
+  ;; http://shreevatsa.wordpress.com/2006/10/22/emacs-copypaste-and-x/
+  ;; http://www.mail-archive.com/help-gnu-emacs@gnu.org/msg03577.html
+ ))
+
+
+
+;;GROOVY;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; turn on syntax highlighting
+(global-font-lock-mode 1)
+
+;;; use groovy-mode when file ends in .groovy or has #!/bin/groovy at start
+(autoload 'groovy-mode "~/.emacs.d/groovy-mode" "Major mode for editing Groovy code." t)
+(add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
+(add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))
+
+;;; make Groovy mode electric by default.
+(add-hook 'groovy-mode-hook
+          '(lambda ()
+             (require 'groovy-electric "~/.emacs.d/groovy-electric")
+             (groovy-electric-mode)))
+
+
+;;VISUAL BASIC MODE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(autoload 'visual-basic-mode "~/.emacs.d/visual-basic-mode" "Visual Basic mode." t)
+(setq auto-mode-alist (append '(("\\.\\(frm\\|bas\\|cls\\)$" .
+                                  visual-basic-mode)) auto-mode-alist))
+
+
+
+;;CONKEROR;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;dodajemy conkeror jako domyslna przegladarke (potrzebna w org-mode do otwierania linkow)
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "/usr/bin/conkeror")
+
+;;ORG;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-to-list 'load-path "/usr/share/emacs/23.3/lisp/org")
+(require 'org-install)
+(require 'org-protocol)
+
+(setq org-directory (expand-file-name "~/org"))
+
+(setq org-todo-keywords
+      (quote ((sequence
+               "TODO(t)"
+               "NEXT(n)"
+               "STARTED(s)"
+               "|" "DONE(d!/!)" "CANCELLED(c@/!)")
+              (sequence "INBOX"))))
+
+;;nie chce zeby eksportowalo slowa z podkreslnikami jako dolny indeks
+(setq org-export-with-sub-superscripts nil)
+
+;;;;AGENDA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; The following lines are always needed.  Choose your own keys.
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(ecb-options-version "2.40")
+ '(org-agenda-files (quote ("~/Dokumenty/Zadania/zadanie_29_6397/zadanie_29_6397.org" "~/org/praca.org"))))
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ )
+
+;;;;CAPTURE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq org-default-notes-file (concat org-directory "/praca.org"))
+(define-key global-map "\C-cc" 'org-capture)
+
+;; drugi template wziety ze str. http://emacs-fu.blogspot.com/2010/12/conkeror-web-browsing-emacs-way.html
+;; pozwala na capture z conkerora
+;; ;; the 'w' corresponds with the 'w' used before as in:
+;;   emacsclient \"org-protocol:/capture:/w/  [...]
+
+(setq org-capture-templates
+      (quote
+       (("t" "todo" entry (file+headline "praca.org" "inbox")
+         "* TODO %?%a\n %U\n"
+         :clock-in t
+         :clock-resume t)
+	("w" "" entry (file+headline "praca.org" "inbox")
+	 "* %^{Title}\n   %u,\n Source: %c\n\n  %i")
+	)))
+
+;;;;BABEL;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq org-ditaa-jar-path "~/emacs/diagram_tools/ditaa/ditaa0_9.jar")
+(setq org-plantuml-jar-path "~/emacs/diagram_tools/plantuml/plantuml.jar")
+
+(add-hook 'org-babel-after-execute-hook 'bh/display-inline-images 'append)
+
+; Make babel results blocks lowercase
+(setq org-babel-results-keyword "results")
+
+(defun bh/display-inline-images ()
+  (condition-case nil
+      (org-display-inline-images)
+    (error nil)))
+
+(org-babel-do-load-languages
+ (quote org-babel-load-languages)
+ (quote ((emacs-lisp . t)
+         (dot . t)
+         (ditaa . t)
+         (R . t)
+         (python . t)
+         (ruby . t)
+         (gnuplot . t)
+         (clojure . t)
+         (sh . t)
+         (ledger . t)
+         (org . t)
+         (plantuml . t)
+         (latex . t))))
+
+; Do not prompt to confirm evaluation
+; This may be dangerous - make sure you understand the consequences
+; of setting this -- see the docstring for details
+;(setq org-confirm-babel-evaluate nil)
+
+; Use fundamental mode when editing plantuml blocks with C-c '
+(add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
+
+;; Don't enable this because it breaks access to emacs from my Android phone
+(setq org-startup-with-inline-images nil)
+
+;;;;PERL;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; cperl-mode is preferred to perl-mode                                        
+;;; "Brevity is the soul of wit" <foo at acm.org>                               
+(defalias 'perl-mode 'cperl-mode)
+
+;;wyłącza podkreślanie spacji
+(setq cperl-invalid-face nil)
+
+;; Turns on most of the CPerlMode options
+(setq cperl-hairy t)
+
+;; komentarze
+(global-set-key (kbd "C-;") 'comment-dwim)
+(put 'dired-find-alternate-file 'disabled nil)
+
+;;;;TRAMP;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; sluzy do otwierania plikow zdalnie po ssh
+;;(require 'tramp)
+;;(setq tramp-default-method "ssh")
+;;(setq tramp-shell-prompt-pattern "^[^>$][>$] *")
+
+(add-to-list 'load-path "~/emacs/emacs-23.4/site-lisp/tramp-2.2.6/lisp/")
+(require 'tramp)
+(setq tramp-shell-prompt-pattern "^.*[>$] *")
+;;(host user proxy)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; ukrywanie wpisywania hasła (wcześniej nie działało)
+;;;; jeśli w jakimś nowym przypadku nie działa należy uwzględnić regex zapytania (prompt) o hasło
+(setq-default
+comint-output-filter-functions
+'(comint-watch-for-password-prompt))
+
+
+;;;;ETAGS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;funkcja tworzaca plik z tagami rekursywnie w zadanym katalogu, dla javy
+(defun create-tags (dir-name)
+  "Create tags file."
+  (interactive "DDirectory: ")
+  (eshell-command 
+   (format "find %s -type f -name \"*.java\" | etags -" dir-name)))
+
+
+;;;;JTAGS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;etags dostosowane do kodu javy
+;;(add-to-list 'load-path "~/emacs/emacs-23.4/site-lisp")
+
+;;(autoload 'jtags-extras "jtags-extras" "Load jtags-extras.")
+;;(add-hook 'java-mode-hook 'jtags-extras)
+
+
+;;;;VELOCITY MODE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-to-list 'load-path "~/emacs/emacs-23.4/site-lisp")
+(autoload 'velocity-mode "vtl" nil t)
+(add-hook 'html-mode-hook 'velocity-mode t t)
+(add-hook 'xml-mode-hook 'velocity-mode t t)
+(add-hook 'text-mode-hook 'velocity-mode t t)
+
+;;;;IDO MODE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
+
+;;;;ECB;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;emacs code browser
+;; Load CEDET.
+;; See cedet/common/cedet.info for configuration details.
+;; IMPORTANT: For Emacs >= 23.2, you must place this *before* any
+;; CEDET component (including EIEIO) gets activated by another 
+;; package (Gnus, auth-source, ...).
+;;(load-file "~/emacs/cedet-1.1/common/cedet.el")
+
+;; Enable EDE (Project Management) features
+;;(global-ede-mode 1)
+
+;; Enable EDE for a pre-existing C++ project
+;;(ede-cpp-root-project "NAME" :file "~/myproject/Makefile")
+
+
+;; Enabling Semantic (code-parsing, smart completion) features
+;; Select one of the following:
+
+;; * This enables the database and idle reparse engines
+;;(semantic-load-enable-minimum-features)
+
+;; * This enables some tools useful for coding, such as summary mode,
+;;   imenu support, and the semantic navigator
+;;(semantic-load-enable-code-helpers)
+
+;; * This enables even more coding tools such as intellisense mode,
+;;   decoration mode, and stickyfunc mode (plus regular code helpers)
+;;(semantic-load-enable-gaudy-code-helpers)
+
+;; * This enables the use of Exuberant ctags if you have it installed.
+;;   If you use C++ templates or boost, you should NOT enable it.
+;; (semantic-load-enable-all-exuberent-ctags-support)
+;;   Or, use one of these two types of support.
+;;   Add support for new languages only via ctags.
+;; (semantic-load-enable-primary-exuberent-ctags-support)
+;;   Add support for using ctags as a backup parser.
+;; (semantic-load-enable-secondary-exuberent-ctags-support)
+
+;; Enable SRecode (Template management) minor-mode.
+;; (global-srecode-minor-mode 1)
+
+;;(add-to-list 'load-path "~/emacs/emacs-23.4/site-lisp/ecb-snap")
+;;(load-file "~/emacs/emacs-23.4/site-lisp/ecb-snap/ecb.el")
+
+;;(global-ede-mode 1)
+;;(semantic-load-enable-code-helpers)
+;;(global-srecode-minor-mode 1)
+;;(require 'ecb)
+;;(require 'jde)
+
+(semantic-mode 1)
+(global-ede-mode 1)
+;;(semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion
+(global-semantic-idle-summary-mode 1)
+
+(setq ecb-tip-of-the-day nil)  ;;wylacza tip of the day - wyskakiwalo niepotrzebne okienko
+
+;;;;JAVA MODE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;tabulator ma miec 4 a nie 8 spacji (zarowno w nowotworzonym jak i w czytanym kodzie)
+(add-hook 'java-mode-hook (lambda ()
+                            (setq c-basic-offset 4
+                                  tab-width 4
+                                  indent-tabs-mode t)))
+
+;;dla kodu javy uruchom od razu indeksowanie gtags
+(add-hook 'java-mode-hook 'gtags-mode)
+
+;;;;XML;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;funkcja sluzy do formatowania (glownie wstawiania "\n") xml
+;;przydaje sie np. gdy mamy plik svg i chcemy podejrzec xml ktory za nim stoi,
+;;ale xml nie ma formatowania
+(defun xml-pretty-print-region (begin end)
+  "Pretty format XML markup in region. You need to have nxml-mode
+http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
+this.  The function inserts linebreaks to separate tags that have
+nothing but whitespace between them.  It then indents the markup
+by using nxml's indentation rules."
+  (interactive "r")
+  (save-excursion
+      (nxml-mode)
+      (goto-char begin)
+      (while (search-forward-regexp "\>[ \\t]*\<" nil t) 
+        (backward-char) (insert "\n"))
+      (indent-region begin end))
+    (message "Ah, much better!"))
+
+
+;;;SQL indent;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;(eval-after-load "sql"
+;;   '(load-library "sql-indent"))
+
+
+;;;;NXHTML;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(load "~/.emacs.d/nxhtml/autostart.el")
+
+
+;;;;GOOGLE TRANSLATE;;;;;;;;;;;;;;;;;;;;;;;
+;;http://oleksandrmanzyuk.wordpress.com/2011/09/21/using-google-translate-from-emacs/
+(defun google-translate (text)
+  (interactive
+   (list
+    (read-from-minibuffer "Translate: ")))
+  (with-output-to-temp-buffer "*Google Translate*"
+    (set-buffer "*Google Translate*")
+    (insert (format "%s" text))
+    (facemenu-set-face 'bold (point-min) (point-max))
+    (insert (format "\n\n%s"
+                    (shell-command-to-string
+                     (format "translate \"%s\"" text))))))
+
+;;;;MAVEN;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;integracja z mavenem
+;;http://walterhiggins.net/blog/posterous-maven-and-emacs
+;;http://vastusutra.blogspot.com/2007/06/getting-emacs-and-maven-2-to-play.html
+(require 'compile)
+(defvar mvn-command-history nil  "Maven command history variable")
+
+(defun mvnfast()  (interactive)
+  (let ((fn (buffer-file-name)))
+    (let ((dir (file-name-directory fn)))
+    (while (and
+	    (not (file-exists-p (concat dir "/pom.xml")))
+	    (not (equal dir (file-truename (concat dir "/..")))))
+      (setq dir (file-truename (concat dir "/.."))))
+    (if (not (file-exists-p (concat dir "/pom.xml")))
+	(message "No pom.xml found")
+      (compile
+       (concat "mvn -f " dir "/pom.xml install -Dmaven.test.skip=true")))
+    )))
+;;(define-key java-mode-map "\C-c\C-x5" 'mvnfast)
+;;TODO : powyzsza linijka powoduje problem 
+
+(defun mvn(&optional args)
+  "Runs maven in the current project.
+Starting at the directoy where the file being vsisited resides, a search is made for pom.xml recsurively.
+A maven command is made from the first directory where the pom.xml file is found is then displayed  in the minibuffer.
+The command can be edited as needed and then executed.
+Errors are navigate to as in any other compile mode"
+  (interactive)
+  (let ((fn (buffer-file-name)))
+    (let ((dir (file-name-directory fn)))
+      (while (and
+	      (not (file-exists-p (concat dir "/pom.xml")))
+	      (not (equal dir (file-truename (concat dir "/..")))))
+	(setq dir (file-truename (concat dir "/.."))))
+      (if (not (file-exists-p (concat dir "/pom.xml")))
+	  (message "No pom.xml found")
+	(compile (read-from-minibuffer "Command: "(concat "mvn -f " dir "/pom.xml install -Dmaven.test.skip=true")nil nil 'mvn-command-history))))))
+
+;; String pattern for locating errors in maven output.
+;; This assumes a Windows drive letter at the beginning
+;; (add-to-list 'compilation-error-regexp-alist '("^\\([a-zA-Z]:.*\\):\\[\\([0-9]+\\),\\([0-9]+\\)\\]" 1 2 3))
+
+;;;;LOG4J;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;m.in. koloruje i ulatwia filtrowanie plikow z logami log4j
+;;problem pojawia sie z wiekszymi plikami (>256KB tzn. tyle ile wynosi default dla (font-lock-maximum-size))
+;;poniewaz takie pliki z logami wystepuja rzadko, postanowilem nie ruszac tej zmiennej
+(autoload 'log4j-mode "~/.emacs.d/log4j-mode.el" "Major mode for viewing log files." t)
+
+;;akceptuje rowniez pliki typu "server.log.2013-04-12"
+;;TODO : wyrazenie nie jest zupelnie poprawne
+(add-to-list 'auto-mode-alist '("\\.log\\.?.*\\'" . log4j-mode))
+
+;;;;GTYPIST;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;nauka pisania na klawiaturze
+;;;;NIE DZIALA!!!!!!!!!!!!!!!!!!!!!!!!!
+;;(autoload 'gtypist-mode "~/.emacs.d/gtypist-mode")
+;;(setq auto-mode-alist
+;;           (cons '("\\.typ\\'" . gtypist-mode) auto-mode-alist))
+
+;;;;RAILS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;integruje emacsa (shell) z rvm 
+(require 'rvm)
+(rvm-use-default) ;; use rvm's default ruby for the current Emacs session
+
+;;;;TOUCH TYPING;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(autoload 'typing-of-emacs "~/.emacs.d/typing.el" "The Typing Of Emacs, a game." t)
