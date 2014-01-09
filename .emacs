@@ -404,8 +404,14 @@ comint-output-filter-functions
                                   indent-tabs-mode t)))
 
 ;;dla kodu javy uruchom od razu indeksowanie gtags
-(add-hook 'java-mode-hook 'gtags-mode)
 (autoload 'gtags-mode "gtags" "" t)
+;;(add-hook 'java-mode-hook 'gtags-mode)
+(add-hook 'java-mode-hook
+    '(lambda ()
+       (gtags-mode 1)))
+(add-hook 'c-mode-hook
+    '(lambda ()
+       (gtags-mode 1)))
 (setq gtags-suggested-key-mapping t)
 (setq gtags-select-buffer-single t)
 
