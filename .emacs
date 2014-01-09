@@ -405,6 +405,9 @@ comint-output-filter-functions
 
 ;;dla kodu javy uruchom od razu indeksowanie gtags
 (add-hook 'java-mode-hook 'gtags-mode)
+(autoload 'gtags-mode "gtags" "" t)
+(setq gtags-suggested-key-mapping t)
+(setq gtags-select-buffer-single t)
 
 ;;;;XML;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;funkcja sluzy do formatowania (glownie wstawiania "\n") xml
