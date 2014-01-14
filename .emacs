@@ -529,6 +529,8 @@ Errors are navigate to as in any other compile mode"
 
 ;;;;OCTOPRES;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;http://blog.paphus.com/blog/2012/08/01/introducing-octopress-blogging-for-org-mode/
+(require 'org-octopress)
+
 (defun save-then-publish ()
   (interactive)
   (save-buffer)
@@ -556,5 +558,6 @@ Errors are navigate to as in any other compile mode"
 	("blog" . (:components ("blog-org" "blog-extra")))
 	))
 
-
-(require 'org-octopress)
+;;I don't use document title in my org posts (post has it title istead).
+;;Common headers hierarchy is expected by my octpress theme.
+(setq org-export-octopress-toplevel-hlevel 1)
