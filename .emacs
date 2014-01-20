@@ -37,7 +37,7 @@
 ;;     (color-theme-initialize)
 ;;     (color-theme-hober)))
 
-;;ansi color vector customization in shell mode
+;;ansi color vector customization (for shell mode)
 ;;when background color is black, blue should be CadetBlue1 for instance
 ;;otherwise ls dirs color is not well visible
 ;;;M-x list-colors-display to list available colors
