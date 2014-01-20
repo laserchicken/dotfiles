@@ -42,6 +42,8 @@
 ;;;na czarnym tle
 ;;;aby wyświetlkić dozwolone kolory M-x list-colors-display
 
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
 (setq ansi-color-names-vector
   ["black" "red" "green" "yellow" "CadetBlue1" "magenta" "cyan" "white"])
 
@@ -300,14 +302,6 @@
 (require 'tramp)
 (setq tramp-shell-prompt-pattern "^.*[>$] *")
 ;;(host user proxy)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;; ukrywanie wpisywania hasła (wcześniej nie działało)
-;;;; jeśli w jakimś nowym przypadku nie działa należy uwzględnić regex zapytania (prompt) o hasło
-(setq-default
-comint-output-filter-functions
-'(comint-watch-for-password-prompt))
-
 
 ;;;;ETAGS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;funkcja tworzaca plik z tagami rekursywnie w zadanym katalogu, dla javy
