@@ -37,15 +37,15 @@
 ;;     (color-theme-initialize)
 ;;     (color-theme-hober)))
 
-;;ustawinia wektora ansi color uzywanego w trybie shell;;;;;;;;;;;;;;;;;;;;;
-;;;zamieniono blue na CadetBlue1 poniewaz ls dla katalogow bylo nieczytelne
-;;;na czarnym tle
-;;;aby wyświetlkić dozwolone kolory M-x list-colors-display
+;;ansi color vector customization in shell mode
+;;when background color is black, blue should be CadetBlue1 for instance
+;;otherwise ls dirs color is not well visible
+;;;M-x list-colors-display to list available colors
 
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 (setq ansi-color-names-vector
-  ["black" "red" "green" "yellow" "CadetBlue1" "magenta" "cyan" "white"])
+  ["black" "red" "green" "yellow" "blue" "magenta" "cyan" "white"])
 
 ;;;
 (setq x-select-enable-clipboard t)
