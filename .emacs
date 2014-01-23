@@ -397,17 +397,7 @@
                                   tab-width 4
                                   indent-tabs-mode t)))
 
-;;dla kodu javy uruchom od razu indeksowanie gtags
-(autoload 'gtags-mode "gtags" "" t)
-;;(add-hook 'java-mode-hook 'gtags-mode)
-(add-hook 'java-mode-hook
-    '(lambda ()
-       (gtags-mode 1)))
-(add-hook 'c-mode-hook
-    '(lambda ()
-       (gtags-mode 1)))
-(setq gtags-suggested-key-mapping t)
-(setq gtags-select-buffer-single t)
+(add-hook 'java-mode-hook 'ggtags-mode)
 
 ;;;;XML;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;funkcja sluzy do formatowania (glownie wstawiania "\n") xml
