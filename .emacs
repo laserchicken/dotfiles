@@ -398,7 +398,7 @@
                                   indent-tabs-mode t)))
 
 (add-hook 'java-mode-hook 'ggtags-mode)
-(add-hook 'javascript-mode-hook 'ggtags-mode)
+(add-hook 'js-mode-hook 'ggtags-mode)
 (add-hook 'ruby-mode-hook 'ggtags-mode)
 (add-hook 'scheme-mode-hook 'ggtags-mode)
 
