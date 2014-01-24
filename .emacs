@@ -398,6 +398,9 @@
                                   indent-tabs-mode t)))
 
 (add-hook 'java-mode-hook 'ggtags-mode)
+(add-hook 'javascript-mode-hook 'ggtags-mode)
+(add-hook 'ruby-mode-hook 'ggtags-mode)
+(add-hook 'scheme-mode-hook 'ggtags-mode)
 
 ;;;;XML;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;funkcja sluzy do formatowania (glownie wstawiania "\n") xml
