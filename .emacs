@@ -67,9 +67,6 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 
-;;;;;;;;;sql-postgres;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;(setq sql-postgres-options (list "-p 5433"))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; python-mode settings
@@ -422,11 +419,6 @@ by using nxml's indentation rules."
     (message "Ah, much better!"))
 
 
-;;;SQL indent;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;(eval-after-load "sql"
-;;   '(load-library "sql-indent"))
-
-
 ;;;;NXHTML;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load "~/.emacs.d/nxhtml/autostart.el")
 
@@ -566,3 +558,9 @@ Errors are navigate to as in any other compile mode"
 ;;Warning: `font-lock-syntactic-keywords' is an obsolete variable (as of 24.1);
 ;;    use `syntax-propertize-function' instead.
 ;;I changed (renamed) functions in mumamo.el file.
+
+;;;;SQL;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;highlight postgres keywords in sql-mode by default
+(add-hook 'sql-mode-hook
+	  (lambda ()
+	    (sql-highlight-postgres-keywords)))
