@@ -556,6 +556,9 @@ Errors are navigate to as in any other compile mode"
 ;;Common headers hierarchy is expected by my octpress theme.
 (setq org-export-octopress-toplevel-hlevel 1)
 
+;;turn on `org-indent-mode' (clean view) on startup
+(setq org-startup-indented t)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;https://gist.github.com/tkf/3951163
 ;; Workaround the annoying warnings:
