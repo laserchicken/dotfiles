@@ -67,9 +67,6 @@
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 
-;;;;;;;;;sql-postgres;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;(setq sql-postgres-options (list "-p 5433"))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;; python-mode settings
@@ -397,17 +394,10 @@
                                   tab-width 4
                                   indent-tabs-mode t)))
 
-;;dla kodu javy uruchom od razu indeksowanie gtags
-(autoload 'gtags-mode "gtags" "" t)
-;;(add-hook 'java-mode-hook 'gtags-mode)
-(add-hook 'java-mode-hook
-    '(lambda ()
-       (gtags-mode 1)))
-(add-hook 'c-mode-hook
-    '(lambda ()
-       (gtags-mode 1)))
-(setq gtags-suggested-key-mapping t)
-(setq gtags-select-buffer-single t)
+(add-hook 'java-mode-hook 'ggtags-mode)
+(add-hook 'js-mode-hook 'ggtags-mode)
+(add-hook 'ruby-mode-hook 'ggtags-mode)
+(add-hook 'scheme-mode-hook 'ggtags-mode)
 
 ;;;;XML;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;funkcja sluzy do formatowania (glownie wstawiania "\n") xml
@@ -427,11 +417,6 @@ by using nxml's indentation rules."
         (backward-char) (insert "\n"))
       (indent-region begin end))
     (message "Ah, much better!"))
-
-
-;;;SQL indent;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;(eval-after-load "sql"
-;;   '(load-library "sql-indent"))
 
 
 ;;;;NXHTML;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -576,3 +561,9 @@ Errors are navigate to as in any other compile mode"
 ;;Warning: `font-lock-syntactic-keywords' is an obsolete variable (as of 24.1);
 ;;    use `syntax-propertize-function' instead.
 ;;I changed (renamed) functions in mumamo.el file.
+
+;;;;SQL;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;highlight postgres keywords in sql-mode by default
+(add-hook 'sql-mode-hook
+	  (lambda ()
+	    (sql-highlight-postgres-keywords)))
