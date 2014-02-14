@@ -27,17 +27,17 @@ if(random_page_number<10) {
 homepage = "http://mywiki.wooledge.org/BashFAQ/" + random_page_string;
 
 //////////////////////////////////////////////////////////////////////////////////////   
-
 define_webjump("so", "http://stackoverflow.com/search?q=%s");
 define_webjump("ling", "http://ling.pl/%s");
+define_webjump("dict", "http://www.thefreedictionary.com/%s");
 define_webjump("youtube", "http://www.youtube.com/results?search_query=%s&search=Search");
 define_webjump("postgresql", "http://www.postgresql.org/search/?u=%2Fdocs%2F8.4%2F&q=%s");
 define_webjump("trac-show-ticket", "https://subversion.ultimo.pl/trac/projects/ticket/%s");
-
 define_webjump("hermes", "http://hermes.ultimo.pl/");
 
-//Integracja conkerora z org-mode (capture), zrodlo http://emacs-fu.blogspot.com/2010/12/conkeror-web-browsing-emacs-way.html
-// org-protocol stuff
+//Integrate conkerora with org-mode (capture),
+//source http://emacs-fu.blogspot.com/2010/12/conkeror-web-browsing-emacs-way.html
+//org-protocol stuff
 function org_capture (url, title, selection, window) {
     var cmd_str =
         'emacsclient -c \"org-protocol:/capture:/w/'+url+'/'+title+'/'+selection+'\"';
@@ -58,12 +58,12 @@ interactive("org-capture", "Clip url, title, and selection to capture via org-pr
 define_key(content_buffer_normal_keymap, "C-c c", "org-capture");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-//otwiera link z kodem java w emacsie
-//najpierw nalezy wcisnac "c" (copy link) i po skopiowaniu tego linka uruchomic ta funkcje
-//skorzystano z funkcji read_from_x_primary_selection
+//Opens source code links (local) in emacs
+//first hit "c" (copy link) and then run that function;
+//used read_from_x_primary_selection function
 //http://babbagefiles.blogspot.com/2011/01/conkeror-browsing-web-emacs-style.html
-//emacsclient -n  dodaje plik do juz istniejacego okna emacsa
-//TODO : nalezy sprawdzic co sie stanie jesli okno nie bedzie istniec, w razie bledu obsluzyc go
+//emacsclient -n opens new buffer in existing emacs client instance
+//TODO : what if client does not exists?
 function emacs_open_source_url(window) {
     var source_url = read_from_x_primary_selection();
 
@@ -73,7 +73,7 @@ function emacs_open_source_url(window) {
     var source_url_cleaned = source_url_cleaned.replace(/#.*/, "");
 
     if(line_column_nr) {
-//numer kolumny należy podać zawsze (może być 1) - wygląda na to ze tego wymaga składnia wywołania emacsa	
+//column number must be always specified (may be 1) - looks like emacsclient call syntax thing
 	
 	var line_nr = line_column_nr[1];
 	var column_nr = line_column_nr[2];
@@ -95,18 +95,16 @@ window.minibuffer.message('source: ' + cmd_str);
     shell_command_blind(cmd_str);
 }
 interactive("emacs-open-source-url",
-    "otwiera kod spod url w kliencie emacsa",
+    "Opens source code at url in emacs",
     function (I) {
         emacs_open_source_url(
             I.window);	    
     });
 
-// skrot "C-c C-o" otwiera wczesniej skopiowany url,
-//skrot analogiczny z otwieraniem linka w dokumencie org w emacsie
+// "C-c C-o" opens copied url
+//(like link open in org document)
 define_key(content_buffer_normal_keymap, "C-c C-o", "emacs-open-source-url");
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-//uzywane do zrodel nie lokalnych 
-//otwiera link z kodem java w emacsie
+//Opens source code links (remote) in emacs
 external_content_handlers.set("text/x-java", "emacsclient -n");
-
