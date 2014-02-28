@@ -297,7 +297,8 @@
 
 (add-to-list 'load-path "~/emacs/emacs-23.4/site-lisp/tramp-2.2.6/lisp/")
 (require 'tramp)
-(setq tramp-shell-prompt-pattern "^.*[>$] *")
+;;(setq tramp-shell-prompt-pattern "^.*[>$] *")
+(setq tramp-shell-prompt-pattern "^[^>$][>$] *")
 ;;(host user proxy)
 
 ;;;;ETAGS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -398,26 +399,6 @@
 (add-hook 'js-mode-hook 'ggtags-mode)
 (add-hook 'ruby-mode-hook 'ggtags-mode)
 (add-hook 'scheme-mode-hook 'ggtags-mode)
-
-;;;;XML;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;funkcja sluzy do formatowania (glownie wstawiania "\n") xml
-;;przydaje sie np. gdy mamy plik svg i chcemy podejrzec xml ktory za nim stoi,
-;;ale xml nie ma formatowania
-(defun xml-pretty-print-region (begin end)
-  "Pretty format XML markup in region. You need to have nxml-mode
-http://www.emacswiki.org/cgi-bin/wiki/NxmlMode installed to do
-this.  The function inserts linebreaks to separate tags that have
-nothing but whitespace between them.  It then indents the markup
-by using nxml's indentation rules."
-  (interactive "r")
-  (save-excursion
-      (nxml-mode)
-      (goto-char begin)
-      (while (search-forward-regexp "\>[ \\t]*\<" nil t) 
-        (backward-char) (insert "\n"))
-      (indent-region begin end))
-    (message "Ah, much better!"))
-
 
 ;;;;NXHTML;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (load "~/.emacs.d/nxhtml/autostart.el")
