@@ -5,37 +5,23 @@ editor_shell_command = "emacsclient -c";
 view_source_use_external_editor = true;
 
 //Random start page///////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////   
-/**
- * Returns a random integer between min and max
- * Using Math.round() will give you a non-uniform distribution!
- */
-var getRandomInt = function (min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+//run thefreedictionary quiz whenever I start my browser
+let (home = get_home_directory()) {
+      home.appendRelativePath(".conkerorrc/thefreedictionary_quiz.html");
+      homepage = home.path;
 }
-
-var random_page_number = getRandomInt(1, 110);
-if(random_page_number<10) {
-    random_page_string = "00" + random_page_number.toString();
-} else if(random_page_number>10 && random_page_number<100) {
-    random_page_string = "0" + random_page_number.toString();
-} else {
-    random_page_string = random_page_number.toString();
-}
-
-// teach me something about bash whenever I start my browser
-homepage = "http://mywiki.wooledge.org/BashFAQ/" + random_page_string;
 
 //////////////////////////////////////////////////////////////////////////////////////   
 define_webjump("so", "http://stackoverflow.com/search?q=%s");
 define_webjump("ling", "http://ling.pl/%s");
 define_webjump("dict", "http://www.thefreedictionary.com/%s");
+define_webjump("dict_source", "http://pl.thefreedictionary.com/%s");
 define_webjump("youtube", "http://www.youtube.com/results?search_query=%s&search=Search");
 define_webjump("postgresql", "http://www.postgresql.org/search/?u=%2Fdocs%2F8.4%2F&q=%s");
 define_webjump("trac-show-ticket", "https://subversion.ultimo.pl/trac/projects/ticket/%s");
 define_webjump("hermes", "http://hermes.ultimo.pl/");
 
-//Integrate conkerora with org-mode (capture),
+//Integrate conkeror with org-mode (capture),
 //source http://emacs-fu.blogspot.com/2010/12/conkeror-web-browsing-emacs-way.html
 //org-protocol stuff
 function org_capture (url, title, selection, window) {
