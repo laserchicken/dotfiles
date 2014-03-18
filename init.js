@@ -1,5 +1,5 @@
 // emacs as external editor
-editor_shell_command = "emacsclient -c";
+editor_shell_command = "emacsclient -n";
 
 // view source in your editor
 view_source_use_external_editor = true;
