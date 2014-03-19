@@ -550,10 +550,11 @@ Errors are navigate to as in any other compile mode"
 	    (sql-highlight-postgres-keywords)))
 
 ;;;;MULTI-TERM;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq term-unbind-key-list '("C-z" "C-h" "C-y"))
+(setq term-unbind-key-list '("C-z" "C-x" "C-c" "C-h" "C-y"))
 
 (setq term-bind-key-alist
   '(
+    ("C-c C-c" . term-interrupt-subjob)
     ("C-p" . previous-line)
     ("C-n" . next-line)
     ("C-s" . isearch-forward)
@@ -568,4 +569,4 @@ Errors are navigate to as in any other compile mode"
     ("M-N" . term-send-backward-kill-word)
     ("M-r" . term-send-reverse-search-history)
     ("M-," . term-send-input)
-    ("M-." . comint-dynamic-complete)))
+    ("M-." . comint-dynamic-complete))
