@@ -3,4 +3,4 @@
 	name = laserchicken
 [core]
 	pager = 
-	editor = emacsclient
+	editor = "emacsclient -c"
