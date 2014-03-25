@@ -62,6 +62,11 @@
   ; was dired-up-directory
  ))
 
+;;
+(add-hook 'dired-load-hook
+	  (function (lambda () (load "dired-x"))))
+
+
 ;;;;;;wylaczenie gui;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
