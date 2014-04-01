@@ -575,3 +575,23 @@ Errors are navigate to as in any other compile mode"
     ("M-r" . term-send-reverse-search-history)
     ("M-," . term-send-input)
     ("M-." . comint-dynamic-complete))
+
+;;;;
+(defun show-file-repo-browser (branch &optional tag)
+  "Browse code from buffer on a dedicated repo web site"
+  (interactive "sBranch: \nsTag: ")
+  ;;file-prefix is local file path prefix which
+  ;;will be replaced with url-prefix for remote repo browser,
+  ;;rest of path is supposed to be the same for both remote browser url and local path
+  (let ((file-prefix "/home/dev/Development/Smyk2.0")
+	(url-prefix "https://subversion.ultimo.pl/trac/projects/browser/Smyk2.0")
+	(webbrowser-command "conkeror")) ;;TODO : browse-url-generic-program
+  (shell-command
+   (concat webbrowser-command
+	   " "
+	   (replace-regexp-in-string file-prefix
+				     (concat url-prefix
+					     "/" branch
+					     (if (not (equal tag ""))
+						 (concat "/" tag)))
+				     (buffer-file-name))))))
