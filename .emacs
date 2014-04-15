@@ -583,14 +583,16 @@ Errors are navigate to as in any other compile mode"
   ;;file-prefix is local file path prefix which
   ;;will be replaced with url-prefix for remote repo browser,
   ;;rest of path is supposed to be the same for both remote browser url and local path
-  (let ((file-prefix "/home/dev/Development/Smyk2.0")
-	(url-prefix "https://subversion.ultimo.pl/trac/projects/browser/Smyk2.0")
+  (let ((svn-file-prefix "/home/dev/Development/Smyk2.0")
+	(svn-url-prefix "https://subversion.ultimo.pl/trac/projects/browser/Smyk2.0")
+	(git-file-prefix "/home/dev/git/thefreedictionary-mode")
+	(git-url-prefix "https://github.com/laserchicken/thefreedictionary-mode/blob")
 	(webbrowser-command "conkeror")) ;;TODO : browse-url-generic-program
   (shell-command
    (concat webbrowser-command
 	   " "
-	   (replace-regexp-in-string file-prefix
-				     (concat url-prefix
+	   (replace-regexp-in-string git-file-prefix
+				     (concat git-url-prefix
 					     "/" branch
 					     (if (not (equal tag ""))
 						 (concat "/" tag)))
