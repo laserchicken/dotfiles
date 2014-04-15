@@ -574,7 +574,7 @@ Errors are navigate to as in any other compile mode"
     ("M-N" . term-send-backward-kill-word)
     ("M-r" . term-send-reverse-search-history)
     ("M-," . term-send-input)
-    ("M-." . comint-dynamic-complete))
+    ("M-." . comint-dynamic-complete)))
 
 ;;;;
 (defun show-file-repo-browser (branch &optional tag)
