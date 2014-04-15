@@ -7,7 +7,7 @@ view_source_use_external_editor = true;
 //Random start page///////////////////////////////////////////////////////////////////
 //run dictionary quiz whenever I start my browser
 let (home = get_home_directory()) {
-      home.appendRelativePath(".conkerorrc/dictionary_quiz.html");
+      home.appendRelativePath(".conkerorrc/quiz.html");
       homepage = home.path;
 }
 
