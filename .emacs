@@ -207,17 +207,18 @@
 (global-set-key "\C-cb" 'org-iswitchb)
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(ecb-options-version "2.40")
+ '(local-remote-prefixes (quote (quote (("/home/dev/Development/Smyk2.0" "https://subversion.ultimo.pl/trac/projects/browser/Smyk2.0") ("/home/dev/git/thefreedictionary-mode" "https://github.com/laserchicken/thefreedictionary-mode/blob")))))
  '(org-agenda-files (quote ("~/Dokumenty/Zadania/zadanie_29_6397/zadanie_29_6397.org" "~/org/praca.org"))))
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  )
 
 ;;;;CAPTURE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -576,24 +577,34 @@ Errors are navigate to as in any other compile mode"
     ("M-," . term-send-input)
     ("M-." . comint-dynamic-complete)))
 
-;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq local-remote-prefixes
+  '(("/home/dev/Development/Smyk2.0" "https://subversion.ultimo.pl/trac/projects/browser/Smyk2.0")
+    ("/home/dev/git/thefreedictionary-mode" "https://github.com/laserchicken/thefreedictionary-mode/blob")))
+
+(defun get-matching-pair-for-file-path (file-path url-path-pairs)
+  (if url-path-pairs ;;if list is not empty
+      (if (string-match (car (car url-path-pairs)) file-path) ;;get next pair's first element (path) and try to match it against actual file path
+	      (car url-path-pairs) ;;if matched return pair
+	    (get-matching-pair-for-file-path file-path (cdr url-path-pairs))))) ;;if not matched remove that pair and proceed with left pairs
+
 (defun show-file-repo-browser (branch &optional tag)
   "Browse code from buffer on a dedicated repo web site"
   (interactive "sBranch: \nsTag: ")
   ;;file-prefix is local file path prefix which
   ;;will be replaced with url-prefix for remote repo browser,
   ;;rest of path is supposed to be the same for both remote browser url and local path
-  (let ((svn-file-prefix "/home/dev/Development/Smyk2.0")
-	(svn-url-prefix "https://subversion.ultimo.pl/trac/projects/browser/Smyk2.0")
-	(git-file-prefix "/home/dev/git/thefreedictionary-mode")
-	(git-url-prefix "https://github.com/laserchicken/thefreedictionary-mode/blob")
-	(webbrowser-command "conkeror")) ;;TODO : browse-url-generic-program
-  (shell-command
-   (concat webbrowser-command
-	   " "
-	   (replace-regexp-in-string git-file-prefix
-				     (concat git-url-prefix
-					     "/" branch
-					     (if (not (equal tag ""))
-						 (concat "/" tag)))
-				     (buffer-file-name))))))
+  (let ((file-path (buffer-file-name)))
+    (let ((pair (get-matching-pair-for-file-path file-path local-remote-prefixes))) 
+      (if pair
+	  (shell-command
+	   (concat browse-url-generic-program
+		   " "
+		   (replace-regexp-in-string (car pair)
+					     (concat (car (cdr pair))
+						     "/" branch
+						     (if (not (equal tag ""))
+							 (concat "/" tag)))
+					     file-path)))
+	(message "No local-remote-prefixes pair defined")))))
+
