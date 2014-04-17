@@ -584,13 +584,16 @@ Errors are navigate to as in any other compile mode"
 
 (defun get-matching-pair-for-file-path (file-path url-path-pairs)
   ;;if list is not empty
-  (if url-path-pairs
+  (while url-path-pairs
       ;;get next pair's first element (path)
       ;;and try to match it against actual file path
-      (if (string-match (car (car url-path-pairs)) file-path)
-	  (car url-path-pairs) ;;if matched return pair
-	;;if not matched remove that pair and proceed with left pairs
-	(get-matching-pair-for-file-path file-path (cdr url-path-pairs))))) 
+      (cond ((string-match (car (car url-path-pairs)) file-path)
+	     ;;if matched it will be the pair returned
+	     (setq matching-pair (car url-path-pairs)) 
+	     (setq url-path-pairs '()))
+	    ;;if not matched remove that pair and proceed with left pairs      
+	    (t (setq url-path-pairs (cdr url-path-pairs)))))
+  matching-pair)
 
 (defun show-file-repo-browser (branch &optional tag)
   "Browse code from buffer on a dedicated repo web site"
@@ -599,8 +602,14 @@ Errors are navigate to as in any other compile mode"
   ;;will be replaced with url-prefix for remote repo browser,
   ;;rest of path is supposed to be the same
   ;;for both remote browser url and local path
-  (let ((file-path (buffer-file-name)))
-    (let ((pair (get-matching-pair-for-file-path file-path local-remote-prefixes))) 
+  (let* ((file-path (buffer-file-name))
+	 (pair (get-matching-pair-for-file-path file-path
+						local-remote-prefixes))
+	 (create-url-prefix (lambda (url-prefix branch tag)
+	   (concat url-prefix
+		   "/" branch
+		   (if (not (equal tag ""))
+		       (concat "/" tag))))))
       (if pair
 	  (shell-command
 	   (concat browse-url-generic-program
@@ -611,5 +620,4 @@ Errors are navigate to as in any other compile mode"
 						     (if (not (equal tag ""))
 							 (concat "/" tag)))
 					     file-path)))
-	(message "No local-remote-prefixes pair defined")))))
-
+	(message "No local-remote-prefixes pair defined"))))
