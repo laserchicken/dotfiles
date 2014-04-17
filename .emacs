@@ -583,17 +583,22 @@ Errors are navigate to as in any other compile mode"
     ("/home/dev/git/thefreedictionary-mode" "https://github.com/laserchicken/thefreedictionary-mode/blob")))
 
 (defun get-matching-pair-for-file-path (file-path url-path-pairs)
-  (if url-path-pairs ;;if list is not empty
-      (if (string-match (car (car url-path-pairs)) file-path) ;;get next pair's first element (path) and try to match it against actual file path
-	      (car url-path-pairs) ;;if matched return pair
-	    (get-matching-pair-for-file-path file-path (cdr url-path-pairs))))) ;;if not matched remove that pair and proceed with left pairs
+  ;;if list is not empty
+  (if url-path-pairs
+      ;;get next pair's first element (path)
+      ;;and try to match it against actual file path
+      (if (string-match (car (car url-path-pairs)) file-path)
+	  (car url-path-pairs) ;;if matched return pair
+	;;if not matched remove that pair and proceed with left pairs
+	(get-matching-pair-for-file-path file-path (cdr url-path-pairs))))) 
 
 (defun show-file-repo-browser (branch &optional tag)
   "Browse code from buffer on a dedicated repo web site"
   (interactive "sBranch: \nsTag: ")
   ;;file-prefix is local file path prefix which
   ;;will be replaced with url-prefix for remote repo browser,
-  ;;rest of path is supposed to be the same for both remote browser url and local path
+  ;;rest of path is supposed to be the same
+  ;;for both remote browser url and local path
   (let ((file-path (buffer-file-name)))
     (let ((pair (get-matching-pair-for-file-path file-path local-remote-prefixes))) 
       (if pair
