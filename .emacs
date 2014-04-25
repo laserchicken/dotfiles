@@ -28,15 +28,6 @@
 ;; 
 (global-set-key "\C-x4t" 'transpose-buffers)
 
-;;;;emacs-goodies-el ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;(add-to-list 'load-path "/usr/share/emacs/23.3/site-lisp/emacs-goodies-el")
-;;(require 'color-theme)
-;;(eval-after-load "color-theme"
-;;  '(progn
-;;     (color-theme-initialize)
-;;     (color-theme-hober)))
-
 ;;ansi color vector customization (for shell mode)
 ;;when background color is black, blue should be CadetBlue1 for instance
 ;;otherwise ls dirs color is not well visible
@@ -255,11 +246,6 @@
          (plantuml . t)
          (latex . t))))
 
-; Do not prompt to confirm evaluation
-; This may be dangerous - make sure you understand the consequences
-; of setting this -- see the docstring for details
-;(setq org-confirm-babel-evaluate nil)
-
 ; Use fundamental mode when editing plantuml blocks with C-c '
 (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
 
@@ -462,13 +448,6 @@ Errors are navigate to as in any other compile mode"
 ;;TODO : wyrazenie nie jest zupelnie poprawne
 (add-to-list 'auto-mode-alist '("\\.log\\.?.*\\'" . log4j-mode))
 
-;;;;GTYPIST;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;nauka pisania na klawiaturze
-;;;;NIE DZIALA!!!!!!!!!!!!!!!!!!!!!!!!!
-;;(autoload 'gtypist-mode "~/.emacs.d/gtypist-mode")
-;;(setq auto-mode-alist
-;;           (cons '("\\.typ\\'" . gtypist-mode) auto-mode-alist))
-
 ;;;;RAILS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;integruje emacsa (shell) z rvm 
 (require 'rvm)
@@ -513,6 +492,8 @@ Errors are navigate to as in any other compile mode"
 ;;Common headers hierarchy is expected by my octpress theme.
 (setq org-export-octopress-toplevel-hlevel 1)
 
+
+;;;;ORG-MODE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;turn on `org-indent-mode' (clean view) on startup
 (setq org-startup-indented t)
 
