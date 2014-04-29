@@ -593,7 +593,7 @@ Errors are navigate to as in any other compile mode"
 ;;(dired) opens file in external app;;;;;;;;;;
 ;;http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html
 
-(defun xah-open-in-external-app (&optional file)
+(defun open-in-external-app (&optional file)
   "Open the current file or dired marked files in external app.
 
 The app is chosen from your OS's preference."
