@@ -543,6 +543,23 @@ Errors are navigate to as in any other compile mode"
     ("M-," . term-send-input)
     ("M-." . comint-dynamic-complete)))
 
+;;;;SPELLING;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(setq ispell-dictionary "en")
+
+(add-hook 'org-mode-hook
+	  (lambda()
+	    (flyspell-mode 1)))
+
+(dolist (hook '(text-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode 1))))
+(dolist (hook '(change-log-mode-hook log-edit-mode-hook))
+  (add-hook hook (lambda () (flyspell-mode -1))))
+
+(global-set-key (kbd "C-c P") 
+  (lambda()(interactive)
+    (ispell-change-dictionary "pl")
+    (flyspell-buffer)))
+
 ;;;;FUNCTIONS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq local-remote-prefixes
   '(("/home/dev/Development/Smyk2.0" "https://subversion.ultimo.pl/trac/projects/browser/Smyk2.0")
@@ -617,3 +634,4 @@ The app is chosen from your OS's preference."
         (mapc (lambda (fPath) (shell-command (format "open \"%s\"" fPath)) )  myFileList) )
        ((string-equal system-type "gnu/linux")
         (mapc (lambda (fPath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" fPath)) ) myFileList) ) ) ) ) )
+
