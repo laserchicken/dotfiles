@@ -455,7 +455,6 @@ Errors are navigate to as in any other compile mode"
 
 ;;;;TOUCH TYPING;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (autoload 'typing-of-emacs "~/.emacs.d/typing.el" "The Typing Of Emacs, a game." t)
-(put 'dired-find-alternate-file 'disabled nil)
 
 ;;;;OCTOPRES;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;http://blog.paphus.com/blog/2012/08/01/introducing-octopress-blogging-for-org-mode/
@@ -503,7 +502,7 @@ Errors are navigate to as in any other compile mode"
 ;; Warning (mumamo-per-buffer-local-vars):
 ;; Already 'permanent-local t: buffer-file-name
 (when (and (>= emacs-major-version 24)
-	   (>= emacs-minor-version 2))
+	   (>= emacs-minor-version 3))
 (eval-after-load "mumamo"
   '(setq mumamo-per-buffer-local-vars
 	 (delq 'buffer-file-name mumamo-per-buffer-local-vars))))
@@ -635,3 +634,4 @@ The app is chosen from your OS's preference."
        ((string-equal system-type "gnu/linux")
         (mapc (lambda (fPath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" fPath)) ) myFileList) ) ) ) ) )
 
+(put 'dired-find-alternate-file 'disabled nil)
