@@ -442,16 +442,17 @@ Errors are navigate to as in any other compile mode"
 ;;m.in. koloruje i ulatwia filtrowanie plikow z logami log4j
 ;;problem pojawia sie z wiekszymi plikami (>256KB tzn. tyle ile wynosi default dla (font-lock-maximum-size))
 ;;poniewaz takie pliki z logami wystepuja rzadko, postanowilem nie ruszac tej zmiennej
-(autoload 'log4j-mode "~/.emacs.d/log4j-mode.el" "Major mode for viewing log files." t)
+;;(autoload 'log4j-mode "~/.emacs.d/log4j-mode.el" "Major mode for viewing log files." t)
 
 ;;akceptuje rowniez pliki typu "server.log.2013-04-12"
 ;;TODO : wyrazenie nie jest zupelnie poprawne
-(add-to-list 'auto-mode-alist '("\\.log\\.?.*\\'" . log4j-mode))
+;;(add-to-list 'auto-mode-alist '("\\.log\\.?.*\\'" . log4j-mode))
 
 ;;;;RAILS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;integruje emacsa (shell) z rvm 
-(require 'rvm)
-(rvm-use-default) ;; use rvm's default ruby for the current Emacs session
+;;integruje emacsa (shell) z rvm
+;;i'm using rbenv for now
+;;(require 'rvm)
+;;(rvm-use-default) ;; use rvm's default ruby for the current Emacs session
 
 ;;;;TOUCH TYPING;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (autoload 'typing-of-emacs "~/.emacs.d/typing.el" "The Typing Of Emacs, a game." t)
@@ -635,3 +636,15 @@ The app is chosen from your OS's preference."
         (mapc (lambda (fPath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" fPath)) ) myFileList) ) ) ) ) )
 
 (put 'dired-find-alternate-file 'disabled nil)
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes (quote (wheatgrass))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
