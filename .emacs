@@ -10,7 +10,10 @@
 
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize)
-  (exec-path-from-shell-copy-env "PS1"))
+  (exec-path-from-shell-copy-env "PS1")
+
+  (setq mac-option-modifier 'control)
+  (setq mac-command-modifier 'meta))
 
 
 ;;;;
