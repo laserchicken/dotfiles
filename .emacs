@@ -9,7 +9,9 @@
 ;;;aby przeladowac ten plik nalezy skilowac ten proces i odpalic jeszcze raz
 
 (when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize))
+  (exec-path-from-shell-initialize)
+  (exec-path-from-shell-copy-env "PS1"))
+
 
 ;;;;
 (add-to-list 'load-path "~/.emacs.d/")
