@@ -8,6 +8,9 @@
 ;;;emacs dziala jako demon (proces emacs --daemon jako program startowy),
 ;;;aby przeladowac ten plik nalezy skilowac ten proces i odpalic jeszcze raz
 
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
+
 ;;;;
 (add-to-list 'load-path "~/.emacs.d/")
 
@@ -378,7 +381,7 @@
 (add-hook 'scheme-mode-hook 'ggtags-mode)
 
 ;;;;NXHTML;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(load "~/.emacs.d/nxhtml/autostart.el")
+;;(load "~/.emacs.d/nxhtml/autostart.el")
 
 
 ;;;;GOOGLE TRANSLATE;;;;;;;;;;;;;;;;;;;;;;;
@@ -459,7 +462,7 @@ Errors are navigate to as in any other compile mode"
 
 ;;;;OCTOPRES;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;http://blog.paphus.com/blog/2012/08/01/introducing-octopress-blogging-for-org-mode/
-(require 'org-octopress)
+;;(require 'org-octopress)
 
 (defun save-then-publish ()
   (interactive)
@@ -648,3 +651,4 @@ The app is chosen from your OS's preference."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
