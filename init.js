@@ -1,3 +1,5 @@
+PATH.push("/Applications/Conkeror.app/Contents/MacOS");
+
 // emacs as external editor
 editor_shell_command = "emacsclient -c";
 
