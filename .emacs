@@ -12,8 +12,9 @@
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-env "PS1")
 
-  (setq mac-option-modifier 'control)
+  (setq mac-option-modifier 'none)
   (setq mac-command-modifier 'meta))
+
 
 
 ;;;;
@@ -656,4 +657,3 @@ The app is chosen from your OS's preference."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-
