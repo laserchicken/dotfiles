@@ -15,8 +15,6 @@
   (setq mac-option-modifier 'none)
   (setq mac-command-modifier 'meta))
 
-
-
 ;;;;
 (add-to-list 'load-path "~/.emacs.d/")
 
