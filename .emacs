@@ -18,6 +18,11 @@
 ;;;;
 (add-to-list 'load-path "~/.emacs.d/")
 
+;;;;image+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;you need ImageMagick to use this package
+;;for image zooming
+(require 'image+)
+
 ;;;;;transpozycja bufforów;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;If you have a window split showing two buffers, you can transpose the two buffers
 (defun transpose-buffers (arg)
