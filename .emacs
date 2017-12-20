@@ -1,13 +1,14 @@
 (require 'package)
 (package-initialize)
 
-(setq package-archives '(("ELPA" . "http://tromey.com/elpa/") 
+(setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
+                          ("melpa" . "https://melpa.org/packages/")
                           ("gnu" . "http://elpa.gnu.org/packages/")
                           ("marmalade" . "http://marmalade-repo.org/packages/")))
 
 ;;;emacs dziala jako demon (proces emacs --daemon jako program startowy),
 ;;;aby przeladowac ten plik nalezy skilowac ten proces i odpalic jeszcze raz
-
+;;
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-env "PS1")
@@ -16,12 +17,12 @@
   (setq mac-command-modifier 'meta))
 
 ;;;;
-(add-to-list 'load-path "~/.emacs.d/")
+;;(add-to-list 'load-path "~/.emacs.d/")
 
 ;;;;image+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;you need ImageMagick to use this package
 ;;for image zooming
-(require 'image+)
+;;(require 'image+)
 
 ;;;;;transpozycja bufforów;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;If you have a window split showing two buffers, you can transpose the two buffers
@@ -165,6 +166,7 @@
   
 (setq interprogram-cut-function 'paste-to-osx)
 (setq interprogram-paste-function 'copy-from-osx)
+
 
 ;;GROOVY;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -665,7 +667,8 @@ The app is chosen from your OS's preference."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (wheatgrass))))
+ '(custom-enabled-themes (quote (wheatgrass)))
+ '(package-selected-packages (quote (js2-mode exec-path-from-shell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -673,6 +676,12 @@ The app is chosen from your OS's preference."
  ;; If there is more than one, they won't work right.
  )
 
-;;switch cmd and option
 (setq mac-command-modifier 'meta)
 (setq mac-option-modifier nil)
+
+;;;;;;;;js2-mode
+(require 'js2-mode)
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-hook 'js2-mode-hook (setq indent-tabs-mode nil
+                               tab-width 2
+			       js2-basic-offset 2))
