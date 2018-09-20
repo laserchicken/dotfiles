@@ -195,8 +195,10 @@
 
 ;;CONKEROR;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;dodajemy conkeror jako domyslna przegladarke (potrzebna w org-mode do otwierania linkow)
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "~/bin/conkeror")
+;;(setq browse-url-browser-function 'browse-url-generic
+;;      browse-url-generic-program "~/bin/conkeror")
+
+(setq browse-url-browser-function 'browse-url-default-macosx-browser)
 
 ;;ORG;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'load-path "/usr/share/emacs/23.3/lisp/org")
