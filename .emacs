@@ -693,3 +693,5 @@ The app is chosen from your OS's preference."
 (setq ring-bell-function 'ignore)
 (global-set-key (kbd "C-x p") 'previous-multiframe-window)
 
+(global-set-key (kbd "C-x c") 'save-buffers-kill-emacs)
+(server-start)
