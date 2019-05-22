@@ -691,4 +691,5 @@ The app is chosen from your OS's preference."
 (grep-apply-setting 'grep-find-command "find . -type f -not -path './node_modules/*' | xargs grep ''")
 
 (setq ring-bell-function 'ignore)
+(global-set-key (kbd "C-x p") 'previous-multiframe-window)
 
