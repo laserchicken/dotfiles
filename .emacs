@@ -572,7 +572,10 @@ Errors are navigate to as in any other compile mode"
     ("M-." . comint-dynamic-complete)))
 
 ;;;;SPELLING;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq ispell-dictionary "en")
+(setq ispell-program-name "/usr/local/Cellar/aspell/0.60.6.1_1/bin/aspell")
+(setq ispell-local-dictionary "en_US")
+(setq ispell-local-dictionary-alist
+      '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
 
 (add-hook 'org-mode-hook
 	  (lambda()
