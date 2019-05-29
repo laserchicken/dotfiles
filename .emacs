@@ -690,6 +690,10 @@ The app is chosen from your OS's preference."
 (add-hook 'js2-mode-hook (setq indent-tabs-mode nil
                                tab-width 2
 			       js2-basic-offset 2))
+
+
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+
 ;;;;;;;;;grep-find
 (grep-apply-setting 'grep-find-command "find . -type f -not -path './node_modules/*' | xargs grep ''")
 
