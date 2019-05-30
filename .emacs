@@ -673,7 +673,9 @@ The app is chosen from your OS's preference."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes (quote (wheatgrass)))
- '(package-selected-packages (quote (js2-mode exec-path-from-shell))))
+ '(package-selected-packages
+   (quote
+    (rjsx-mode graphql-mode php-mode scala-mode speed-type js2-mode exec-path-from-shell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
