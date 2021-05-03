@@ -6,10 +6,7 @@
                           ("gnu" . "http://elpa.gnu.org/packages/")
                           ("marmalade" . "http://marmalade-repo.org/packages/")))
 
-;;;emacs dziala jako demon (proces emacs --daemon jako program startowy),
-;;;aby przeladowac ten plik nalezy skilowac ten proces i odpalic jeszcze raz
-;;
-(when (memq window-system '(mac ns))
+(when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-env "PS1")
 
@@ -51,9 +48,6 @@
 (setq ansi-color-names-vector
   ["black" "red" "green" "yellow" "blue" "magenta" "cyan" "white"])
 
-;;;
-(setq x-select-enable-clipboard t)
-
 ;;;;dired;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;When moving to parent directory by `^´,
 ;;Dired by default creates a new buffer for each movement up.
@@ -71,7 +65,7 @@
 	  (function (lambda () (load "dired-x"))))
 
 
-;;;;;;wylaczenie gui;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;no gui;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
 (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
 (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
@@ -97,22 +91,6 @@
                     (set-variable 'py-indent-offset 4)
                     (set-variable 'py-smart-indentation nil)
                     (set-variable 'indent-tabs-mode nil))))
-
-;;CHEETAH;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(define-derived-mode cheetah-mode html-mode "Cheetah"
-  (make-face 'cheetah-variable-face)
-  (font-lock-add-keywords
-   nil
-   '(
-     ("\\(#\\(from\\|else\\|include\\|extends\\|set\\|def\\|import\\|for\\|if\\|end\\)+\\)\\>" 1 font-lock-type-face)
-     ("\\(#\\(from\\|for\\|end\\)\\).*\\<\\(for\\|import\\|def\\|if\\|in\\)\\>" 3 font-lock-type-face)
-     ("\\(##.*\\)\n" 1 font-lock-comment-face)
-     ("\\(\\$\\(?:\\sw\\|}\\|{\\|\\s_\\)+\\)" 1 font-lock-variable-name-face))
-   )
-  (font-lock-mode 1)
-  )
-(setq auto-mode-alist (cons '( "\\.tmpl\\'" . cheetah-mode ) auto-mode-alist ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; http://hugoheden.wordpress.com/2009/03/08/copypaste-with-emacs-in-terminal/
@@ -163,40 +141,9 @@
     (let ((proc (start-process "pbcopy" "*Messages*" "pbcopy")))
       (process-send-string proc text)
       (process-send-eof proc))))
-  
+
 (setq interprogram-cut-function 'paste-to-osx)
 (setq interprogram-paste-function 'copy-from-osx)
-
-
-;;GROOVY;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;; turn on syntax highlighting
-(global-font-lock-mode 1)
-
-;;; use groovy-mode when file ends in .groovy or has #!/bin/groovy at start
-(autoload 'groovy-mode "~/.emacs.d/groovy-mode" "Major mode for editing Groovy code." t)
-(add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
-(add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))
-
-;;; make Groovy mode electric by default.
-(add-hook 'groovy-mode-hook
-          '(lambda ()
-             (require 'groovy-electric "~/.emacs.d/groovy-electric")
-             (groovy-electric-mode)))
-
-
-;;VISUAL BASIC MODE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(autoload 'visual-basic-mode "~/.emacs.d/visual-basic-mode" "Visual Basic mode." t)
-(setq auto-mode-alist (append '(("\\.\\(frm\\|bas\\|cls\\)$" .
-                                  visual-basic-mode)) auto-mode-alist))
-
-
-
-;;CONKEROR;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;dodajemy conkeror jako domyslna przegladarke (potrzebna w org-mode do otwierania linkow)
-;;(setq browse-url-browser-function 'browse-url-generic
-;;      browse-url-generic-program "~/bin/conkeror")
 
 (setq browse-url-browser-function 'browse-url-default-macosx-browser)
 
@@ -215,7 +162,7 @@
                "|" "DONE(d!/!)" "CANCELLED(c@/!)")
               (sequence "INBOX"))))
 
-;;nie chce zeby eksportowalo slowa z podkreslnikami jako dolny indeks
+;;
 (setq org-export-with-sub-superscripts nil)
 
 ;;;;AGENDA;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -224,25 +171,6 @@
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cb" 'org-iswitchb)
-
-;;;;CAPTURE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq org-default-notes-file (concat org-directory "/praca.org"))
-(define-key global-map "\C-cc" 'org-capture)
-
-;; drugi template wziety ze str. http://emacs-fu.blogspot.com/2010/12/conkeror-web-browsing-emacs-way.html
-;; pozwala na capture z conkerora
-;; ;; the 'w' corresponds with the 'w' used before as in:
-;;   emacsclient \"org-protocol:/capture:/w/  [...]
-
-(setq org-capture-templates
-      (quote
-       (("t" "todo" entry (file+headline "praca.org" "inbox")
-         "* TODO %?%a\n %U\n"
-         :clock-in t
-         :clock-resume t)
-	("w" "" entry (file+headline "praca.org" "inbox")
-	 "* %^{Title}\n   %u,\n Source: %c\n\n  %i")
-	)))
 
 ;;;;BABEL;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq org-ditaa-jar-path "~/emacs/diagram_tools/ditaa/ditaa0_9.jar")
@@ -268,7 +196,7 @@
          (ruby . t)
          (gnuplot . t)
          (clojure . t)
-         (sh . t)
+         (shell . t)
          (ledger . t)
          (org . t)
          (plantuml . t)
@@ -277,25 +205,12 @@
 ; Use fundamental mode when editing plantuml blocks with C-c '
 (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
 
-;; Don't enable this because it breaks access to emacs from my Android phone
 (setq org-startup-with-inline-images nil)
 
-;;;;PERL;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; cperl-mode is preferred to perl-mode                                        
-;;; "Brevity is the soul of wit" <foo at acm.org>                               
-(defalias 'perl-mode 'cperl-mode)
-
-;;wyłącza podkreślanie spacji
-(setq cperl-invalid-face nil)
-
-;; Turns on most of the CPerlMode options
-(setq cperl-hairy t)
-
-;; komentarze
+;; comment
 (global-set-key (kbd "C-;") 'comment-dwim)
 
 ;;;;TRAMP;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; sluzy do otwierania plikow zdalnie po ssh
 ;;(require 'tramp)
 ;;(setq tramp-default-method "ssh")
 ;;(setq tramp-shell-prompt-pattern "^[^>$][>$] *")
@@ -314,15 +229,6 @@
   (eshell-command 
    (format "find %s -type f -name \"*.java\" | etags -" dir-name)))
 
-
-;;;;JTAGS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;etags dostosowane do kodu javy
-;;(add-to-list 'load-path "~/emacs/emacs-23.4/site-lisp")
-
-;;(autoload 'jtags-extras "jtags-extras" "Load jtags-extras.")
-;;(add-hook 'java-mode-hook 'jtags-extras)
-
-
 ;;;;VELOCITY MODE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'load-path "~/emacs/emacs-23.4/site-lisp")
 (autoload 'velocity-mode "vtl" nil t)
@@ -334,57 +240,6 @@
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
 (ido-mode 1)
-
-;;;;ECB;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;emacs code browser
-;; Load CEDET.
-;; See cedet/common/cedet.info for configuration details.
-;; IMPORTANT: For Emacs >= 23.2, you must place this *before* any
-;; CEDET component (including EIEIO) gets activated by another 
-;; package (Gnus, auth-source, ...).
-;;(load-file "~/emacs/cedet-1.1/common/cedet.el")
-
-;; Enable EDE (Project Management) features
-;;(global-ede-mode 1)
-
-;; Enable EDE for a pre-existing C++ project
-;;(ede-cpp-root-project "NAME" :file "~/myproject/Makefile")
-
-
-;; Enabling Semantic (code-parsing, smart completion) features
-;; Select one of the following:
-
-;; * This enables the database and idle reparse engines
-;;(semantic-load-enable-minimum-features)
-
-;; * This enables some tools useful for coding, such as summary mode,
-;;   imenu support, and the semantic navigator
-;;(semantic-load-enable-code-helpers)
-
-;; * This enables even more coding tools such as intellisense mode,
-;;   decoration mode, and stickyfunc mode (plus regular code helpers)
-;;(semantic-load-enable-gaudy-code-helpers)
-
-;; * This enables the use of Exuberant ctags if you have it installed.
-;;   If you use C++ templates or boost, you should NOT enable it.
-;; (semantic-load-enable-all-exuberent-ctags-support)
-;;   Or, use one of these two types of support.
-;;   Add support for new languages only via ctags.
-;; (semantic-load-enable-primary-exuberent-ctags-support)
-;;   Add support for using ctags as a backup parser.
-;; (semantic-load-enable-secondary-exuberent-ctags-support)
-
-;; Enable SRecode (Template management) minor-mode.
-;; (global-srecode-minor-mode 1)
-
-;;(add-to-list 'load-path "~/emacs/emacs-23.4/site-lisp/ecb-snap")
-;;(load-file "~/emacs/emacs-23.4/site-lisp/ecb-snap/ecb.el")
-
-;;(global-ede-mode 1)
-;;(semantic-load-enable-code-helpers)
-;;(global-srecode-minor-mode 1)
-;;(require 'ecb)
-;;(require 'jde)
 
 (semantic-mode 1)
 (global-ede-mode 1)
@@ -401,13 +256,9 @@
                                   indent-tabs-mode t)))
 
 (add-hook 'java-mode-hook 'ggtags-mode)
-(add-hook 'js-mode-hook 'ggtags-mode)
+;;(add-hook 'js-mode-hook 'ggtags-mode)
 (add-hook 'ruby-mode-hook 'ggtags-mode)
 (add-hook 'scheme-mode-hook 'ggtags-mode)
-
-;;;;NXHTML;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;(load "~/.emacs.d/nxhtml/autostart.el")
-
 
 ;;;;GOOGLE TRANSLATE;;;;;;;;;;;;;;;;;;;;;;;
 ;;http://oleksandrmanzyuk.wordpress.com/2011/09/21/using-google-translate-from-emacs/
@@ -422,104 +273,6 @@
     (insert (format "\n\n%s"
                     (shell-command-to-string
                      (format "translate \"%s\"" text))))))
-
-;;;;MAVEN;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;integracja z mavenem
-;;http://walterhiggins.net/blog/posterous-maven-and-emacs
-;;http://vastusutra.blogspot.com/2007/06/getting-emacs-and-maven-2-to-play.html
-(require 'compile)
-(defvar mvn-command-history nil  "Maven command history variable")
-
-(defun mvnfast()  (interactive)
-  (let ((fn (buffer-file-name)))
-    (let ((dir (file-name-directory fn)))
-    (while (and
-	    (not (file-exists-p (concat dir "/pom.xml")))
-	    (not (equal dir (file-truename (concat dir "/..")))))
-      (setq dir (file-truename (concat dir "/.."))))
-    (if (not (file-exists-p (concat dir "/pom.xml")))
-	(message "No pom.xml found")
-      (compile
-       (concat "mvn -f " dir "/pom.xml install -Dmaven.test.skip=true")))
-    )))
-;;(define-key java-mode-map "\C-c\C-x5" 'mvnfast)
-;;TODO : powyzsza linijka powoduje problem 
-
-(defun mvn(&optional args)
-  "Runs maven in the current project.
-Starting at the directoy where the file being vsisited resides, a search is made for pom.xml recsurively.
-A maven command is made from the first directory where the pom.xml file is found is then displayed  in the minibuffer.
-The command can be edited as needed and then executed.
-Errors are navigate to as in any other compile mode"
-  (interactive)
-  (let ((fn (buffer-file-name)))
-    (let ((dir (file-name-directory fn)))
-      (while (and
-	      (not (file-exists-p (concat dir "/pom.xml")))
-	      (not (equal dir (file-truename (concat dir "/..")))))
-	(setq dir (file-truename (concat dir "/.."))))
-      (if (not (file-exists-p (concat dir "/pom.xml")))
-	  (message "No pom.xml found")
-	(compile (read-from-minibuffer "Command: "(concat "mvn -f " dir "/pom.xml install -Dmaven.test.skip=true")nil nil 'mvn-command-history))))))
-
-;; String pattern for locating errors in maven output.
-;; This assumes a Windows drive letter at the beginning
-;; (add-to-list 'compilation-error-regexp-alist '("^\\([a-zA-Z]:.*\\):\\[\\([0-9]+\\),\\([0-9]+\\)\\]" 1 2 3))
-
-;;;;LOG4J;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;m.in. koloruje i ulatwia filtrowanie plikow z logami log4j
-;;problem pojawia sie z wiekszymi plikami (>256KB tzn. tyle ile wynosi default dla (font-lock-maximum-size))
-;;poniewaz takie pliki z logami wystepuja rzadko, postanowilem nie ruszac tej zmiennej
-;;(autoload 'log4j-mode "~/.emacs.d/log4j-mode.el" "Major mode for viewing log files." t)
-
-;;akceptuje rowniez pliki typu "server.log.2013-04-12"
-;;TODO : wyrazenie nie jest zupelnie poprawne
-;;(add-to-list 'auto-mode-alist '("\\.log\\.?.*\\'" . log4j-mode))
-
-;;;;RAILS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;integruje emacsa (shell) z rvm
-;;i'm using rbenv for now
-;;(require 'rvm)
-;;(rvm-use-default) ;; use rvm's default ruby for the current Emacs session
-
-;;;;TOUCH TYPING;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(autoload 'typing-of-emacs "~/.emacs.d/typing.el" "The Typing Of Emacs, a game." t)
-
-;;;;OCTOPRES;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;http://blog.paphus.com/blog/2012/08/01/introducing-octopress-blogging-for-org-mode/
-;;(require 'org-octopress)
-
-(defun save-then-publish ()
-  (interactive)
-  (save-buffer)
-  (org-save-all-org-buffers)
-  (org-publish-current-project))
-
-(setq org-publish-project-alist
-      '(("blog-org" .  (:base-directory "~/blog/octopress/source/org_posts/"
-					:base-extension "org"
-					:publishing-directory "~/blog/octopress/source/_posts/"
-					:sub-superscript ""
-					:recursive t
-					:publishing-function org-publish-org-to-octopress
-					:headline-levels 4
-					:html-extension "markdown"
-					:octopress-extension "markdown"
-					:body-only t))
-	("blog-extra" . (:base-directory "~/blog/octopress/source/org_posts/"
-					 :publishing-directory "~/blog/octopress/source/"
-					 :base-extension "css\\|pdf\\|png\\|jpg\\|gif\\|svg"
-					 :publishing-function org-publish-attachment
-					 :recursive t
-					 :author nil
-					 ))
-	("blog" . (:components ("blog-org" "blog-extra")))
-	))
-
-;;I don't use document title in my org posts (post has it title istead).
-;;Common headers hierarchy is expected by my octpress theme.
-(setq org-export-octopress-toplevel-hlevel 1)
-
 
 ;;;;ORG-MODE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;turn on `org-indent-mode' (clean view) on startup
@@ -591,11 +344,9 @@ Errors are navigate to as in any other compile mode"
     (ispell-change-dictionary "pl")
     (flyspell-buffer)))
 
-;;;;FUNCTIONS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq local-remote-prefixes
-  '(("/home/dev/Development/Smyk2.0" "https://subversion.ultimo.pl/trac/projects/browser/Smyk2.0")
-    ("/home/dev/git/thefreedictionary-mode" "https://github.com/laserchicken/thefreedictionary-mode/blob")))
+(setenv "LANG" "en_US.UTF-8")
 
+;;;;FUNCTIONS;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun get-matching-pair-for-file-path (file-path url-path-pairs)
   ;;if list is not empty
   (while url-path-pairs
@@ -675,7 +426,7 @@ The app is chosen from your OS's preference."
  '(custom-enabled-themes (quote (wheatgrass)))
  '(package-selected-packages
    (quote
-    (rjsx-mode graphql-mode php-mode scala-mode speed-type js2-mode exec-path-from-shell))))
+    (prettier-js add-node-modules-path flycheck indium elixir-mode rjsx-mode graphql-mode php-mode scala-mode speed-type js2-mode exec-path-from-shell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -696,11 +447,33 @@ The app is chosen from your OS's preference."
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 
+;;;;;;;eslint
+(require 'flycheck)
+(setq-default flycheck-disabled-checkers
+              (append flycheck-disabled-checkers
+                      '(javascript-jshint json-jsonlist)))
+(add-hook 'flycheck-mode-hook 'add-node-modules-path)
+
+;; Enable eslint checker for rjsx-mode
+(flycheck-add-mode 'javascript-eslint 'rjsx-mode)
+;; Enable flycheck globally
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+;;;;;;;prettier
+(require 'prettier-js)
+
+(add-hook 'js2-mode-hook 'prettier-js-mode)
+(add-hook 'rjsx-mode-hook 'prettier-js-mode)
+
+;;;;;;;css-mode
+(add-hook 'css-mode-hook (setq css-indent-offset 2))
+
 ;;;;;;;;;grep-find
-(grep-apply-setting 'grep-find-command "find . -type f -not -path './node_modules/*' | xargs grep ''")
+;;(grep-apply-setting 'grep-find-command "find . -type f -not -path './node_modules/*' | xargs grep ''")
 
 (setq ring-bell-function 'ignore)
 (global-set-key (kbd "C-x p") 'previous-multiframe-window)
 
 (global-set-key (kbd "C-x c") 'save-buffers-kill-emacs)
+
 (server-start)
