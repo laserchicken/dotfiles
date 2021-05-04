@@ -229,13 +229,6 @@
   (eshell-command 
    (format "find %s -type f -name \"*.java\" | etags -" dir-name)))
 
-;;;;VELOCITY MODE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(add-to-list 'load-path "~/emacs/emacs-23.4/site-lisp")
-(autoload 'velocity-mode "vtl" nil t)
-(add-hook 'html-mode-hook 'velocity-mode t t)
-(add-hook 'xml-mode-hook 'velocity-mode t t)
-(add-hook 'text-mode-hook 'velocity-mode t t)
-
 ;;;;IDO MODE;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
@@ -423,10 +416,9 @@ The app is chosen from your OS's preference."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (wheatgrass)))
+ '(custom-enabled-themes '(wheatgrass))
  '(package-selected-packages
-   (quote
-    (prettier-js add-node-modules-path flycheck indium elixir-mode rjsx-mode graphql-mode php-mode scala-mode speed-type js2-mode exec-path-from-shell))))
+   '(emmet-mode prettier-js add-node-modules-path flycheck indium elixir-mode rjsx-mode graphql-mode php-mode scala-mode speed-type js2-mode exec-path-from-shell)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -466,7 +458,10 @@ The app is chosen from your OS's preference."
 (add-hook 'rjsx-mode-hook 'prettier-js-mode)
 
 ;;;;;;;css-mode
-(add-hook 'css-mode-hook (setq css-indent-offset 2))
+(setq css-indent-offset 2)
+
+;;;;;;;emmet
+(add-hook 'sgml-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
 
 ;;;;;;;;;grep-find
 ;;(grep-apply-setting 'grep-find-command "find . -type f -not -path './node_modules/*' | xargs grep ''")
