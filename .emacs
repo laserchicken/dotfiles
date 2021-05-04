@@ -325,7 +325,7 @@
     ("M-." . comint-dynamic-complete)))
 
 ;;;;SPELLING;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(setq ispell-program-name "/usr/local/Cellar/aspell/0.60.6.1_1/bin/aspell")
+(setq ispell-program-name "aspell")
 (setq ispell-local-dictionary "en_US")
 (setq ispell-local-dictionary-alist
       '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil nil nil utf-8)))
