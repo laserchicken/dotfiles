@@ -429,6 +429,9 @@ The app is chosen from your OS's preference."
 (setq mac-command-modifier 'meta)
 (setq mac-option-modifier nil)
 
+;;;;;;;;ruby
+(setq-default flycheck-disabled-checkers '(ruby-reek))
+
 ;;;;;;;;js2-mode
 (require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
