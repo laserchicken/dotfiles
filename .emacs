@@ -418,7 +418,7 @@ The app is chosen from your OS's preference."
  ;; If there is more than one, they won't work right.
  '(custom-enabled-themes '(wheatgrass))
  '(package-selected-packages
-   '(emmet-mode prettier-js add-node-modules-path flycheck indium elixir-mode rjsx-mode graphql-mode php-mode scala-mode speed-type js2-mode exec-path-from-shell)))
+   '(lsp-mode emmet-mode prettier-js add-node-modules-path flycheck indium elixir-mode rjsx-mode graphql-mode php-mode scala-mode speed-type js2-mode exec-path-from-shell)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -459,6 +459,13 @@ The app is chosen from your OS's preference."
 
 (add-hook 'js2-mode-hook 'prettier-js-mode)
 (add-hook 'rjsx-mode-hook 'prettier-js-mode)
+
+;;;;;;;lsp
+(add-hook 'js2-mode-hook #'lsp)
+(add-hook 'rjsx-mode-hook #'lsp)
+(require 'yasnippet)
+(yas-reload-all)
+(add-hook 'prog-mode-hook #'yas-minor-mode)
 
 ;;;;;;;css-mode
 (setq css-indent-offset 2)
