@@ -468,8 +468,9 @@ The app is chosen from your OS's preference."
 (yas-reload-all)
 (add-hook 'prog-mode-hook #'yas-minor-mode)
 
-(global-set-key (kbd "TAB") 'company-complete-common)
-(global-set-key (kbd "TAB") 'company-complete)
+(setq lsp-keymap-prefix "C-c C-l")
+(global-set-key (kbd "<C-tab>") 'company-complete-common)
+(global-set-key (kbd "<C-tab>") 'company-complete)
 ;;don't auto-complete, I will call you (TAB) when needed
 (setq company-idle-delay nil)
 
