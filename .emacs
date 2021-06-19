@@ -205,7 +205,7 @@
 ; Use fundamental mode when editing plantuml blocks with C-c '
 (add-to-list 'org-src-lang-modes (quote ("plantuml" . fundamental)))
 
-(setq org-startup-with-inline-images nil)
+(setq org-startup-with-inline-images t)
 
 ;; comment
 (global-set-key (kbd "C-;") 'comment-dwim)
