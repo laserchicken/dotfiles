@@ -463,6 +463,7 @@ The app is chosen from your OS's preference."
 ;;;;;;;lsp
 (add-hook 'js2-mode-hook #'lsp)
 (add-hook 'rjsx-mode-hook #'lsp)
+(add-hook 'css-mode-hook #'lsp)
 (require 'yasnippet)
 (yas-reload-all)
 (add-hook 'prog-mode-hook #'yas-minor-mode)
