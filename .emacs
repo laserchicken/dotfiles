@@ -327,6 +327,10 @@
 	  (lambda()
 	    (flyspell-mode 1)))
 
+(add-hook 'markdown-mode-hook
+	  (lambda()
+	    (flyspell-mode 1)))
+
 (dolist (hook '(text-mode-hook))
   (add-hook hook (lambda () (flyspell-mode 1))))
 (dolist (hook '(change-log-mode-hook log-edit-mode-hook))
